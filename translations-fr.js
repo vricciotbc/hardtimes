@@ -589,8 +589,10 @@ const TR = {
   msg_survived_poor:   { en: "You reached 1940 with only ${nw}. The Depression left its mark, as it did on all of Canada.", fr: "Vous avez atteint 1940 avec seulement {nw} $. La Dépression a laissé sa marque, comme elle l'a fait sur tout le Canada." },
 
   // Historical reflection framing
-  hist_framing:        { en: "Your game ended in {endYear} ({outcome}). Answer this question as if you lived through the entire Depression — drawing on what you know happened to Canadians like {name} between {endYear} and {year}.", fr: "Votre jeu s'est terminé en {endYear} ({outcome}). Répondez à cette question comme si vous aviez vécu toute la Dépression — en vous appuyant sur ce que vous savez de ce qui est arrivé aux Canadiens comme {name} entre {endYear} et {year}." },
-  hist_eyebrow:        { en: "{outcome} in {endYear} — but history continued", fr: "{outcome} en {endYear} — mais l'histoire a continué" },
+  hist_framing:          { en: "Your game ended in {endYear} ({outcome}). Answer this question as if you lived through the entire Depression — drawing on what you know happened to Canadians like {name} between {endYear} and {year}.", fr: "Votre jeu s'est terminé en {endYear} ({outcome}). Répondez à cette question comme si vous aviez vécu toute la Dépression — en vous appuyant sur ce que vous savez de ce qui est arrivé aux Canadiens comme {name} entre {endYear} et {year}." },
+  hist_framing_survived: { en: "You made it to 1940 as {name}. Now look back — answer this question drawing on everything {name} lived through across the entire Depression.", fr: "Vous avez atteint 1940 en tant que {name}. Regardez en arrière — répondez à cette question en vous appuyant sur tout ce que {name} a vécu pendant toute la Dépression." },
+  hist_eyebrow:          { en: "{outcome} in {endYear} — but history continued", fr: "{outcome} en {endYear} — mais l'histoire a continué" },
+  hist_eyebrow_survived: { en: "You survived 1928–1939 — now reflect", fr: "Vous avez survécu à 1928–1939 — réfléchissez maintenant" },
   hist_sub:            { en: "Answer the remaining questions from a historical perspective. {current} of {total} remaining.", fr: "Répondez aux questions restantes d'un point de vue historique. {current} sur {total} restantes." },
 
   // Language toggle

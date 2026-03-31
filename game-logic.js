@@ -1435,8 +1435,10 @@ function closeFamilyAlert() {
 
 document.addEventListener("keydown", (e) => {
   if (e.code !== "Space") return;
-  // Don't fire if user is typing in an input
-  if (document.activeElement && document.activeElement.tagName === "INPUT") return;
+  // Don't fire if user is typing in any text field or interacting with a control
+  const tag = document.activeElement && document.activeElement.tagName;
+  if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || tag === "BUTTON") return;
+  if (document.activeElement && document.activeElement.isContentEditable) return;
   e.preventDefault();
   const btn = document.getElementById("next-turn-btn");
   if (btn && !btn.disabled) nextTurn();
