@@ -715,7 +715,10 @@ function closeReportCard() {
   state.yearStartNetWorth = calcNetWorth();
   state.yearStartCash     = state.cash;
   // Reflection fires immediately after the report card each December
-  checkReflection(year);
+  if (!checkReflection(year)) {
+    // No reflection this year — check if a photo is waiting for this turn
+    checkHistoricalPhoto();
+  }
 }
 
 /*
@@ -1545,6 +1548,8 @@ function submitReflection(qId, year) {
   });
   state.modalPending = null;
   closeModal();
+  // A photo may be queued for this same turn (blocked when report card fired first)
+  checkHistoricalPhoto();
 }
 
 
@@ -1708,14 +1713,15 @@ ${cover}${stats}${decisions}${reflections}${footer}
 
   const safeName   = (studentName || "Student").replace(/[^a-z0-9]/gi, "-");
   const prefix     = L === "fr" ? "Journal-Reflexion" : "Reflection-Journal";
-  const encoded    = "data:text/html;charset=utf-8," + encodeURIComponent(fullHTML);
+  const blob       = new Blob([fullHTML], { type: "text/html;charset=utf-8" });
+  const blobURL    = URL.createObjectURL(blob);
   const link       = document.createElement("a");
-  link.href        = encoded;
+  link.href        = blobURL;
   link.download    = `${prefix}-${safeName}.html`;
   link.style.display = "none";
   document.body.appendChild(link);
   link.click();
-  setTimeout(() => document.body.removeChild(link), 1000);
+  setTimeout(() => { document.body.removeChild(link); URL.revokeObjectURL(blobURL); }, 1000);
 }
 
 function escHtml(str) {
@@ -1745,6 +1751,10 @@ let histOutcome = "";   // "Bankrupt!" or "Destitute!" — shown in framing text
  */
 function startHistoricalReflections(outcome, outcomeMessage) {
   histOutcome = outcome;
+
+  // Close the win overlay if it's open (winner path)
+  document.getElementById("overlay").classList.remove("show");
+
   // Queue every question whose year hasn't been answered in-game yet
   histQueue = REFLECTION_QUESTIONS.filter(
     q => !state.shownReflectionYears.has(q.year)
@@ -1758,12 +1768,13 @@ function startHistoricalReflections(outcome, outcomeMessage) {
 
   showScreen("screen-historical");
 
-  // Show the outcome prominently at the top of the hist header
-  // so students understand what happened before answering questions
+  // Show the outcome message only for loss endings (not for winners)
   const outcomeEl = document.getElementById("hist-outcome-msg");
   if (outcomeEl && outcomeMessage) {
     outcomeEl.textContent = outcomeMessage;
     outcomeEl.style.display = "block";
+  } else if (outcomeEl) {
+    outcomeEl.style.display = "none";
   }
 
   renderHistQuestion();
@@ -1783,10 +1794,13 @@ function renderHistQuestion() {
   const endYear = GAME_START_YEAR + Math.floor(state.turn / 12);
   const outcome = histOutcome.replace("!", "");
 
-  // Framing message
-  const framingText = tf("hist_framing", { endYear, outcome, name: state.characterName, year: q.year });
+  // Framing message — use positive "survived" copy for winners
+  const survived    = histOutcome === "Survived!";
+  const framingKey  = survived ? "hist_framing_survived" : "hist_framing";
+  const eyebrowKey  = survived ? "hist_eyebrow_survived" : "hist_eyebrow";
+  const framingText = tf(framingKey, { endYear, outcome, name: state.characterName, year: q.year });
 
-  const eyebrowText = tf("hist_eyebrow", { outcome, endYear });
+  const eyebrowText = tf(eyebrowKey, { outcome, endYear });
   const subText = tf("hist_sub", { current, total });
   const progressLabel = window.LANG === "fr" ? `Question ${current} sur ${total}` : `Question ${current} of ${total}`;
 
